@@ -1,0 +1,33 @@
+The Logger class serves as the main interface for logging messages.
+It has basic logging methods for each logging level (debug, info, warn, error).
+The Handler interface defines the handle method,
+which is implemented to handle the actual publishing of the log record.
+In this example, there are two classes which represents concrete targets: ConsoleHandler and FileHandler.
+ConsoleHandler writes the log records to the console, while FileHandler writes the records to a file.
+Additional classes can be added for other types of logging, such as database or network logging.
+Some auxiliary handlers:
+    - the FilteredHandler is used to filter logs based on a defined Filter. LogLevelFilter will filter according to the log level.
+    - the MultiHandler loops through each containing handler in the list and publishes the log record to that handler.
+The ConsoleHandler and FileHandler handlers contain a
+formatter to make possible to use different formatting for each handler.
+The LogRecord class simply encapsulates a log record, which consists of a log level, a message, a timestamp and a thread name.
+The LogLevel enum defines the different levels of logging: DEBUG, INFO, WARNING, and ERROR.
+The log level and targets are configurable at runtime via system properties. Example values were added in build.gradle.
+
+Possible improvements:
+ - the logging is done asynchronous in a dedicated thread. The performance can be improved by using multiple threads, one thread per target.
+ - make formatter configurable at runtime
+ - log custom objects and stacktrace
+ - reuse same formatter instance for multiple targets or even better,
+   reuse the result of the formatter to not format the same LogRecord with the same formatter multiple times.
+ - make the library extensible
+   - use fully-qualified name of a target class and reflection
+   - the possibility to programmatically modify the targets and/or log levels
+ - multiple targets of the same type (ex: multiple file handlers with different filenames)
+ - single `if` statement when filtering based on log level and not for each target by keeping track of targets per log level. Ex:
+    {
+      'DEBUG':    [console],
+      'INFO':     [console]
+      'WARNING':  [console, file],
+      'ERROR':    [console, file]
+    }
