@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group 'org.logger'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}
+
+tasks.withType(JavaExec) {
+    systemProperty "org.logger.level", "error"
+    systemProperty "org.logger.targets", "console,file"
+    systemProperty "org.logger.targets.file.level", "warning"
+    systemProperty "org.logger.targets.file.filename", "logs.log"
+    systemProperty "org.logger.targets.console.level", "debug"
+}
