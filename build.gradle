@@ -13,7 +13,7 @@ dependencies {
 
 }
 
-tasks.withType(JavaExec) {
+tasks.withType(JavaExec).configureEach {
     systemProperty "org.logger.level", "error"
     systemProperty "org.logger.targets", "console,file"
     systemProperty "org.logger.targets.file.level", "warning"

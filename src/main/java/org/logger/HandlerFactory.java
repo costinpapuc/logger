@@ -11,6 +11,7 @@ public class HandlerFactory {
     private static final String TARGET_CONSOLE = "console";
     private static final String TARGET_FILE = "file";
     private static final String DEFAULT_LOG_FILE_NAME = "log.txt";
+    private static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.INFO;
 
     public static Handler<LogRecord> getHandler() {
         String targets = System.getProperty("org.logger.targets");
@@ -32,19 +33,23 @@ public class HandlerFactory {
     }
 
     private static LogLevelFilter getFilter(String target) {
-        String level = System.getProperty("org.logger.targets." + target + ".level");
-        if (level == null || level.length() == 0) {
-            level = System.getProperty("org.logger.level");
-        }
-        LogLevel logLevel = Optional.ofNullable(level).filter(lvl -> !emptyString(lvl)).map(lvl -> {
-            try {
-                return LogLevel.valueOf(lvl.toUpperCase());
-            } catch (Exception e) {
-                System.out.println("LOGGER: Unknown level " + lvl + ". Default to 'INFO' level.");
-                return LogLevel.INFO;
-            }
-        }).orElse(LogLevel.INFO);
+        String targetLevel = System.getProperty("org.logger.targets." + target + ".level");
+        String level = emptyString(targetLevel) ? System.getProperty("org.logger.level") : targetLevel;
+        LogLevel logLevel = getLogLevelOrDefault(level);
         return new LogLevelFilter(logLevel);
+    }
+
+    private static LogLevel getLogLevelOrDefault(String logLevel) {
+        if (emptyString(logLevel)) {
+            return DEFAULT_LOG_LEVEL;
+        }
+
+        try {
+            return LogLevel.valueOf(logLevel.toUpperCase());
+        } catch (Exception e) {
+            System.out.println("LOGGER: Unknown level " + logLevel + ". Default to '" + DEFAULT_LOG_LEVEL + "' level.");
+            return DEFAULT_LOG_LEVEL;
+        }
     }
 
     private static Handler<LogRecord> getHandlerByTarget(String target) {

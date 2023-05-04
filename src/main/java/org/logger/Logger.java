@@ -17,7 +17,7 @@ public class Logger {
     private static ExecutorService createSingleThreadTimeoutExecutorService() {
         ThreadPoolExecutor e =
                 new ThreadPoolExecutor(1, 1,
-                        100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+                        100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
         e.allowCoreThreadTimeOut(true);
         return e;
     }
